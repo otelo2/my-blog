@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta charset="utf-8">
+<meta http-equiv="content-type" content="text/html">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title itemprop="name">Setting up Pi-Hole with a recursive DNS Server | Antonio&#39;s Technology</title>
+<meta property="og:title" content="Setting up Pi-Hole with a recursive DNS Server | Antonio&#39;s Technology" />
+<meta name="twitter:title" content="Setting up Pi-Hole with a recursive DNS Server | Antonio&#39;s Technology" />
+<meta itemprop="name" content="Setting up Pi-Hole with a recursive DNS Server | Antonio&#39;s Technology" />
+<meta name="application-name" content="Setting up Pi-Hole with a recursive DNS Server | Antonio&#39;s Technology" />
+<meta property="og:site_name" content="Antonio&#39;s technology" />
+
+<meta name="description" content="DESCRIPTION HERE">
+<meta itemprop="description" content="DESCRIPTION HERE" />
+<meta property="og:description" content="DESCRIPTION HERE" />
+<meta name="twitter:description" content="DESCRIPTION HERE" />
+
+<meta property="og:locale" content="en-us" />
+<meta name="language" content="en-us" />
+
+
+
+  <meta itemprop="image" content="https://blog.antoniosolismz.com/" />
+  <meta property="og:image" content="https://blog.antoniosolismz.com/" />
+  <meta name="twitter:image" content="https://blog.antoniosolismz.com/" />
+  <meta name="twitter:image:src" content="https://blog.antoniosolismz.com/" />
+
+
+
+
+    
+    
+    
+    
+
+    <meta property="og:type" content="article" />
+    <meta property="og:article:published_time" content=2022-05-27T00:00:00Z />
+    <meta property="article:published_time" content=2022-05-27T00:00:00Z />
+
+    
+
+    
+
+    <script defer type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "Article",
+        "headline": "Setting up Pi-Hole with a recursive DNS Server",
+        "author": {
+        "@type": "Person",
+        "name": ""
+        },
+        "datePublished": "2022-05-27",
+        "description": "DESCRIPTION HERE",
+        "wordCount":  1557 ,
+        "mainEntityOfPage": "True",
+        "dateModified": "2022-05-27",
+        "image": {
+        "@type": "imageObject",
+        "url": ""
+        },
+        "publisher": {
+        "@type": "Organization",
+        "name": "Antonio\u0027s Technology"
+        }
+    }
+    </script>
+
+
+<meta name="generator" content="Hugo 0.111.3">
+
+    
+
+    <link rel="canonical" href="https://blog.antoniosolismz.com/posts/setting-up-pihole-with-a-recursive-dns-server/">
+    <link href="/style.min.d16f523c36741e07697791cfe4bcb09b8c92c7034d5cbf85980df65d92a70e97.css" rel="stylesheet">
+    <link href="/code-highlight.min.706d31975fec544a864cb7f0d847a73ea55ca1df91bf495fd12a177138d807cf.css" rel="stylesheet">
+
+    
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+    <link rel="mask-icon" href="/icons/safari-pinned-tab.svg">
+    <link rel="shortcut icon" href="/favicon.ico">
+
+
+
+
+<link rel="manifest" href="https://blog.antoniosolismz.com/site.webmanifest">
+
+<meta name="msapplication-config" content="/browserconfig.xml">
+<meta name="msapplication-TileColor" content="#2d89ef">
+<meta name="theme-color" content="#434648">
+
+    
+    <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg">
+
+    
+    </head>
+<body data-theme = "dark" class="notransition">
+
+<script src="/js/theme.min.8961c317c5b88b953fe27525839672c9343f1058ab044696ca225656c8ba2ab0.js" integrity="sha256-iWHDF8W4i5U/4nUlg5ZyyTQ/EFirBEaWyiJWVsi6KrA="></script>
+
+<div class="navbar" role="navigation">
+    <nav class="menu" aria-label="Main Navigation">
+        <a href="https://blog.antoniosolismz.com/" class="logo">
+            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" 
+viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" 
+stroke-linejoin="round" class="feather feather-home">
+<title>Home</title>
+<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+<polyline points="9 22 9 12 15 12 15 22"></polyline>
+</svg>
+        </a>
+        <input type="checkbox" id="menu-trigger" class="menu-trigger" />
+        <label for="menu-trigger">
+            <span class="menu-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" stroke="currentColor" fill="none" viewBox="0 0 14 14"><title>Menu</title><path stroke-linecap="round" stroke-linejoin="round" d="M10.595 7L3.40726 7"></path><path stroke-linecap="round" stroke-linejoin="round" d="M10.5096 3.51488L3.49301 3.51488"></path><path stroke-linecap="round" stroke-linejoin="round" d="M10.5096 10.4851H3.49301"></path><path stroke-linecap="round" stroke-linejoin="round" d="M0.5 12.5V1.5C0.5 0.947715 0.947715 0.5 1.5 0.5H12.5C13.0523 0.5 13.5 0.947715 13.5 1.5V12.5C13.5 13.0523 13.0523 13.5 12.5 13.5H1.5C0.947715 13.5 0.5 13.0523 0.5 12.5Z"></path></svg>
+            </span>
+        </label>
+
+        <div class="trigger">
+            <ul class="trigger-container">
+                
+                
+                <li>
+                    <a class="menu-link " href="/">
+                        Home
+                    </a>
+                    
+                </li>
+                
+                <li>
+                    <a class="menu-link active" href="/posts/">
+                        Posts
+                    </a>
+                    
+                </li>
+                
+                <li>
+                    <a class="menu-link " href="/pages/about/">
+                        About
+                    </a>
+                    
+                </li>
+                
+                <li class="menu-separator">
+                    <span>|</span>
+                </li>
+            </ul>
+            <a id="mode" href="#">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mode-sunny" width="21" height="21" viewBox="0 0 14 14" stroke-width="1">
+<title>LIGHT</title><g><circle cx="7" cy="7" r="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"></circle><line x1="7" y1="0.5" x2="7" y2="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="2.4" y1="2.4" x2="3.82" y2="3.82" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="0.5" y1="7" x2="2.5" y2="7" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="2.4" y1="11.6" x2="3.82" y2="10.18" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="7" y1="13.5" x2="7" y2="11.5" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="11.6" y1="11.6" x2="10.18" y2="10.18" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="13.5" y1="7" x2="11.5" y2="7" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="11.6" y1="2.4" x2="10.18" y2="3.82" fill="none" stroke-linecap="round" stroke-linejoin="round"></line></g></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="mode-moon" width="21" height="21" viewBox="0 0 14 14" stroke-width="1">
+<title>DARK</title><g><circle cx="7" cy="7" r="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"></circle><line x1="7" y1="0.5" x2="7" y2="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="2.4" y1="2.4" x2="3.82" y2="3.82" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="0.5" y1="7" x2="2.5" y2="7" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="2.4" y1="11.6" x2="3.82" y2="10.18" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="7" y1="13.5" x2="7" y2="11.5" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="11.6" y1="11.6" x2="10.18" y2="10.18" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="13.5" y1="7" x2="11.5" y2="7" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="11.6" y1="2.4" x2="10.18" y2="3.82" fill="none" stroke-linecap="round" stroke-linejoin="round"></line></g></svg>
+            </a>
+        </div>
+    </nav>
+</div>
+
+<div class="wrapper post">
+    <main class="page-content" aria-label="Content">
+        <article>
+            <header class="header">
+                <h1 class="header-title">Setting up Pi-Hole with a recursive DNS Server</h1>
+                
+                <div class="post-meta">
+                    <time datetime="2022-05-27T00:00:00&#43;00:00" itemprop="datePublished"> May 27, 2022 </time>
+                </div>
+            </header>
+            <details class="toc">
+                <summary><b>Table of Contents</b></summary>
+                <nav id="TableOfContents">
+  <ul>
+    <li><a href="#but-what-is-pi-hole-with-a-recursive-dns-server">But what is Pi-Hole with a recursive DNS Server?</a></li>
+    <li><a href="#assumptions">Assumptions</a></li>
+    <li><a href="#flashing-the-os">Flashing the OS</a></li>
+    <li><a href="#installing-pi-hole">Installing Pi-Hole</a></li>
+    <li><a href="#setting-pi-hole-as-dns-server-for-your-devices">Setting Pi-Hole as DNS server for your devices</a>
+      <ul>
+        <li><a href="#windows">Windows</a></li>
+        <li><a href="#android">Android</a></li>
+      </ul>
+    </li>
+    <li><a href="#installing-unbound-recursive-dns-server">Installing Unbound (recursive DNS server)</a></li>
+    <li><a href="#adding-the-unbound-dns-to-pi-hole">Adding the Unbound DNS to Pi-Hole</a></li>
+    <li><a href="#conclusions">Conclusions</a></li>
+    <li><a href="#sources--further-reading">Sources &amp; further reading</a></li>
+  </ul>
+</nav>
+            </details><div class="page-content">
+                <h1 id="setting-up-pi-hole-with-a-recursive-dns-server">Setting up Pi-Hole with a recursive DNS Server</h1>
+<p>This is a project I&rsquo;ve been postponing for about two weeks. In my experience setting up Pi-Hole isn&rsquo;t hard at all but it always ends up taking longer than I expect it to, mainly because I have to track down the sources I used to set it up months ago, so this post will also be for me to later just have it as a reference instead of watching the same video over and over.</p>
+<h2 id="but-what-is-pi-hole-with-a-recursive-dns-server">But what is Pi-Hole with a recursive DNS Server?</h2>
+<p>In short, Pi-Hole is used mainly for ad blocking, specially on devices where it isn&rsquo;t feasible or even impossible to install an ad blocker, like a TV. It has the benefit of blocking ads on the network level, so in theory it can even speed up your connection by dropping data that you would&rsquo;ve just ignored anyway.</p>
+<p>Having it with a recursive DNS Server means that your device that acts as a Pi-Hole can also act as your DNS server, which in some cases can be faster (caching sites that you usually visit) and even more secure, since your request will go directly to the Root Name Servers and get the IP for the domain, thus the company that provides you with the DNS service (Google or your ISP) in theory won&rsquo;t know which sites you are visiting due to the DNS request.</p>
+<p>Sounds good doesn&rsquo;t it? Lets get started.</p>
+<h2 id="assumptions">Assumptions</h2>
+<p>For this project we are assuming:</p>
+<ul>
+<li>We have a Raspberry Pi to run Pi-Hole (I have a Pi Zero W)</li>
+<li>We have an SD card to flash the OS</li>
+<li>We can figure out when a network problem is due to DNS (it may break at some point. A restart will fix it but it is one more step in the diagnostic list)</li>
+</ul>
+<h2 id="flashing-the-os">Flashing the OS</h2>
+<p>We&rsquo;ll start by downloading Raspberry Pi Imager to install Raspberry Pi OS to our SD card (on a previous version of this post we used etcher, but I think the Imager has some more useful features). We can find the installer <a href="https://www.raspberrypi.com/software/">here</a>.</p>
+<p>Install and run the Raspberry Pi Imager.</p>
+<p>Once you open it it will have three options: Choose OS, Choose Storage and Write. For the OS I use Raspberry Pi OS Lite and the storage is my 32GB SD card.</p>
+<p>Now we could click on Write and start the process, but we are going to click on the cog icon on the bottom right.</p>
+<p><img src="/Pasted%20image%2020220523204135.png" alt="Image"></p>
+<p>Since I want this to be a headless (no desktop environment) install, I need to access it via SSH. Previously we had to add the files manually to enable SSH and connect it to our network, but thankfully they&rsquo;ve made this process much simpler.</p>
+<p>The options changed are:</p>
+<ul>
+<li>Set hostname: raspi (optional)</li>
+<li>Enable SSH
+<ul>
+<li>Use password authentication</li>
+</ul>
+</li>
+<li>Set username and password
+<ul>
+<li>pi</li>
+<li>your-password-here</li>
+</ul>
+</li>
+<li>Configure wireless LAN (It pre-fills it with your current network!!!)
+<ul>
+<li>Wireless LAN country: Your-Code (MX in my case)</li>
+</ul>
+</li>
+</ul>
+<p>Now with SSH configured, we can Write the OS to the SD card. This takes a pair of minutes so I went to grab a cup of water.</p>
+<p>When it finishes you will see a message like this one:</p>
+<p><img src="/Pasted%20image%2020220523205116.png" alt="Image"></p>
+<p>Remove the SD card and put it into your Pi.</p>
+<h2 id="installing-pi-hole">Installing Pi-Hole</h2>
+<p>On your Pi (I found the IP address using the Fing mobile app):
+Get the installation script from <a href="https://github.com/pi-hole/pi-hole">Pi-hole&rsquo;s GitHub</a>. The One-Step Automated Install script as of the time of this writing is:</p>
+<p><code>curl -sSL https://install.pi-hole.net | bash</code></p>
+<p>The install script will begin and you just have to follow along and select the options you want. The configuration I used was:</p>
+<ul>
+<li>Static IP Address
+<ul>
+<li>No, Set static IP using custom values
+<ul>
+<li>Enter your desired IP and gateway</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Upstream DNS provider
+<ul>
+<li>Google (Will modify it later)</li>
+</ul>
+</li>
+<li>Install web admin interface</li>
+<li>Install web server and PHP modules</li>
+</ul>
+<p>To change the password of the web interface run:</p>
+<p><code>pihole -a -p yourPasswordHere</code></p>
+<h2 id="setting-pi-hole-as-dns-server-for-your-devices">Setting Pi-Hole as DNS server for your devices</h2>
+<p>Now we need to set the static IP of the pi-hole server to the devices we want to block ads on. The easiest way would be to set it as the DNS server from your router, but in my case I want a finer grain control so I&rsquo;ll do it manually in each device.</p>
+<h3 id="windows">Windows</h3>
+<p>Right click network icon -&gt; Change adapter options -&gt; Right click on your network adapter -&gt; Properties -&gt; Enable Internet Protocol v4 -&gt; Properties -&gt; Use the following DNS addresses -&gt; Your-Pi-Hole-IP-Address.</p>
+<h3 id="android">Android</h3>
+<p>Settings -&gt; Network &amp; Internet -&gt; Wi-Fi -&gt; Your network settings (cog icon) -&gt; Edit -&gt; DNS 1 &amp; 2 -&gt; Your-Pi-Hole-IP-Address.</p>
+<h2 id="installing-unbound-recursive-dns-server">Installing Unbound (recursive DNS server)</h2>
+<p>Install unbound:</p>
+<p><code>sudo apt install unbound</code></p>
+<p>Create the configuration file <code>/etc/unbound/unbound.conf.d/pi-hole.conf</code> and write the following:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">server:
+</span></span><span class="line"><span class="cl">    <span class="c1"># If no logfile is specified, syslog is used</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># logfile: &#34;/var/log/unbound/unbound.log&#34;</span>
+</span></span><span class="line"><span class="cl">    verbosity: <span class="m">0</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    interface: 127.0.0.1
+</span></span><span class="line"><span class="cl">    port: <span class="m">5335</span>
+</span></span><span class="line"><span class="cl">    <span class="k">do</span>-ip4: yes
+</span></span><span class="line"><span class="cl">    <span class="k">do</span>-udp: yes
+</span></span><span class="line"><span class="cl">    <span class="k">do</span>-tcp: yes
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># May be set to yes if you have IPv6 connectivity</span>
+</span></span><span class="line"><span class="cl">    <span class="k">do</span>-ip6: no
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># You want to leave this to no unless you have *native* IPv6. With 6to4 and</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># Terredo tunnels your web browser should favor IPv4 for the same reasons</span>
+</span></span><span class="line"><span class="cl">    prefer-ip6: no
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># Use this only when you downloaded the list of primary root servers!</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># If you use the default dns-root-data package, unbound will find it automatically</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">#root-hints: &#34;/var/lib/unbound/root.hints&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># Trust glue only if it is within the server&#39;s authority</span>
+</span></span><span class="line"><span class="cl">    harden-glue: yes
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># Require DNSSEC data for trust-anchored zones, if such data is absent, the zone becomes BOGUS</span>
+</span></span><span class="line"><span class="cl">    harden-dnssec-stripped: yes
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># Don&#39;t use Capitalization randomization as it known to cause DNSSEC issues sometimes</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># see https://discourse.pi-hole.net/t/unbound-stubby-or-dnscrypt-proxy/9378 for further details</span>
+</span></span><span class="line"><span class="cl">    use-caps-for-id: no
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># Reduce EDNS reassembly buffer size.</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># IP fragmentation is unreliable on the Internet today, and can cause</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># transmission failures when large DNS messages are sent via UDP. Even</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># when fragmentation does work, it may not be secure; it is theoretically</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># possible to spoof parts of a fragmented DNS message, without easy</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># detection at the receiving end. Recently, there was an excellent study</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># &gt;&gt;&gt; Defragmenting DNS - Determining the optimal maximum UDP response size for DNS &lt;&lt;&lt;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># by Axel Koolhaas, and Tjeerd Slokker (https://indico.dns-oarc.net/event/36/contributions/776/)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># in collaboration with NLnet Labs explored DNS using real world data from the</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># the RIPE Atlas probes and the researchers suggested different values for</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># IPv4 and IPv6 and in different scenarios. They advise that servers should</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># be configured to limit DNS messages sent over UDP to a size that will not</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># trigger fragmentation on typical network links. DNS servers can switch</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># from UDP to TCP when a DNS response is too big to fit in this limited</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># buffer size. This value has also been suggested in DNS Flag Day 2020.</span>
+</span></span><span class="line"><span class="cl">    edns-buffer-size: <span class="m">1232</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># Perform prefetching of close to expired message cache entries</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># This only applies to domains that have been frequently queried</span>
+</span></span><span class="line"><span class="cl">    prefetch: yes
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># One thread should be sufficient, can be increased on beefy machines. In reality for most users running on small networks or on a single machine, it should be unnecessary to seek performance enhancement by increasing num-threads above 1.</span>
+</span></span><span class="line"><span class="cl">    num-threads: <span class="m">1</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># Ensure kernel buffer is large enough to not lose messages in traffic spikes</span>
+</span></span><span class="line"><span class="cl">    so-rcvbuf: 1m
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># Ensure privacy of local IP ranges</span>
+</span></span><span class="line"><span class="cl">    private-address: 192.168.0.0/16
+</span></span><span class="line"><span class="cl">    private-address: 169.254.0.0/16
+</span></span><span class="line"><span class="cl">    private-address: 172.16.0.0/12
+</span></span><span class="line"><span class="cl">    private-address: 10.0.0.0/8
+</span></span><span class="line"><span class="cl">    private-address: fd00::/8
+</span></span><span class="line"><span class="cl">    private-address: fe80::/10
+</span></span></code></pre></div><p>Start the local recursive server and test that it is working:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">sudo service unbound restart
+</span></span><span class="line"><span class="cl">dig pi-hole.net @127.0.0.1 -p <span class="m">5335</span>
+</span></span></code></pre></div><p>You should get something like</p>
+<p><img src="/Pasted%20image%2020220523212925.png" alt="Image"></p>
+<p>To further test if it works, you can run:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">dig sigfail.verteiltesysteme.net @127.0.0.1 -p <span class="m">5335</span>
+</span></span><span class="line"><span class="cl">dig sigok.verteiltesysteme.net @127.0.0.1 -p <span class="m">5335</span>
+</span></span></code></pre></div><p>The first command should give a <code>SERVFAIL</code> status and the seconds a <code>NOERROR</code> status.</p>
+<p><img src="/Pasted%20image%2020220523213108.png" alt="Image"></p>
+<h2 id="adding-the-unbound-dns-to-pi-hole">Adding the Unbound DNS to Pi-Hole</h2>
+<p>Now on the Pi-Hole web interface we can go to Settings -&gt; DNS and remove the Google DNS and add our custom DNS.</p>
+<p><img src="/Pasted%20image%2020220523213655.png" alt="Image"></p>
+<p>Click on save at the bottom of the page and we are done!</p>
+<p><img src="/Pasted%20image%2020220523213909.png" alt="Image"></p>
+<h2 id="conclusions">Conclusions</h2>
+<p>This is a process I&rsquo;ve done like three or four times already, so there wasn&rsquo;t much different now or new things to learn. One thing that I did find very nice and I&rsquo;m glad exists is the possibility of configuring the Raspberry Pi right there on the Imager, since before it was another google search for the right file to add and having to check my network configuration; I&rsquo;m honestly super thankful that it is almost automatic now.</p>
+<p>Also I find Pi-hole to be very useful. I always use uBlock Origin but it only works on my desktop so I don&rsquo;t have any way to block ads on my phone, and even on my desktop for anything not in the browser I didn&rsquo;t have anything to block ads. With Pi-hole I just change the DNS in whatever device I want and now I don&rsquo;t even have to worry about it, it is completely transparent to me.</p>
+<p>I&rsquo;ll be fair and also point out that in the case of your Pi-Hole bugging out or your Raspberry Pi losing power or connection, then you won&rsquo;t have a DNS server and will have to either fix the issue or change back to Google&rsquo;s DNS or whatever you use. It isn&rsquo;t that big of a deal, but makes DNS related issues much more common than before.</p>
+<h2 id="sources--further-reading">Sources &amp; further reading</h2>
+<p><a href="https://www.youtube.com/watch?v=FnFtWsZ8IP0">https://www.youtube.com/watch?v=FnFtWsZ8IP0</a>
+<a href="https://docs.pi-hole.net/guides/dns/unbound/">https://docs.pi-hole.net/guides/dns/unbound/</a></p>
+
+            </div>
+        </article></main>
+</div>
+<footer class="footer">
+    <span class="footer_item"> </span>
+    &nbsp;
+
+    <div class="footer_social-icons">
+<a href="https://github.com/otelo2" target="_blank" rel="noopener noreferrer me"
+    title="Github">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round">
+    <path
+        d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
+    </path>
+</svg>
+</a>
+<a href="https://www.linkedin.com/in/antoniosolismz" target="_blank" rel="noopener noreferrer me"
+    title="Linkedin">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round">
+    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+    <rect x="2" y="9" width="4" height="12"></rect>
+    <circle cx="4" cy="4" r="2"></circle>
+</svg>
+</a>
+</div>
+    <small class="footer_copyright">
+        © 2023 Antonio Solis.
+        Powered by <a href="https://github.com/hugo-sid/hugo-blog-awesome" target="_blank" rel="noreferrer noopener">Hugo blog awesome</a>
+        theme on
+        <a href="https://gohugo.io" target="_blank" rel="noreferrer noopener">Hugo</a>.
+    </small>
+</footer><a href="#" title="Go to top" id="totop">
+    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" stroke="currentColor" viewBox="0 96 960 960">
+    <path d="M283 704.739 234.261 656 480 410.261 725.739 656 677 704.739l-197-197-197 197Z"/>
+</svg>
+
+</a>
+
+
+    
+
+
+
+
+    
+    
+        
+    
+
+    
+    
+        
+    
+
+
+
+    
+    <script src="https://blog.antoniosolismz.com/js/main.min.35f435a5d8eac613c52daa28d8af544a4512337d3e95236e4a4978417b8dcb2f.js" integrity="sha256-NfQ1pdjqxhPFLaoo2K9USkUSM30&#43;lSNuSkl4QXuNyy8="></script>
+
+    
+
+</body>
+</html>
