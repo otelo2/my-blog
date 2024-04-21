@@ -23,7 +23,7 @@ Setting them up is super easy too, you just have to go to the page for Cloudflar
 However, I did make an oversimplification in the previous paragraph, since you only really need to install Cloudflare tunnels into a machine within the network you want to expose, not necessarily the host that has the server. This seems like a weird distinction to make, but what this means is that you can expose ANY service from the network just by installing the tunnel into one of the machines in the server, and without having to touch the different services in order to expose them as a subdomain in your domain.
 
 And it really is just that simple:
-1. In the page for cloudflare tunnels you select the tunnel and click the "Configure" button
+1. In the page for Cloudflare tunnels you select the tunnel and click the "Configure" button
 ![Image](/Pasted image 20240420152326.png)
 2. Then click on "Public Hostname"
 ![Image](/Pasted image 20240420151805.png)
