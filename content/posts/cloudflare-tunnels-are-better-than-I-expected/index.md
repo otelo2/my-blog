@@ -24,13 +24,13 @@ However, I did make an oversimplification in the previous paragraph, since you o
 
 And it really is just that simple:
 1. In the page for Cloudflare tunnels you select the tunnel and click the "Configure" button
-![Image](/Pasted image 20240420152326.png)
+![Image](</Pasted image 20240420152326.png>)
 2. Then click on "Public Hostname"
-![Image](/Pasted image 20240420151805.png)
+![Image](</Pasted image 20240420151805.png>)
 3. In this screen you can see the active subdomains with tunnel. To create a new one, click on "Add a public hostname"
-![Image](/Pasted image 20240420151952.png)
+![Image](</Pasted image 20240420151952.png>)
 4. And then just specify the URL that you use to access that service within the network
-![Image](/Pasted image 20240420152211.png)
+![Image](</Pasted image 20240420152211.png>)
 
 This is an incredible abstraction because it allows you to ignore the way the service is set up and it's specific configurations, you just have to specify how you access it and it magically gets tunneled.
 
